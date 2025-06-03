@@ -11,15 +11,15 @@ export default function Home() {
       {/* 탑바 */}
       <nav style={{ backdropFilter: "blur(8px)", background: "rgba(255,255,255,0.8)", borderBottom: "1px solid #eee", boxShadow: "0 2px 8px 0 rgba(0,0,0,0.03)", position: "sticky", top: 0, zIndex: 10 }}>
         <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "32px 0" }}>
-          <Link href="/" style={{ fontSize: 28, fontWeight: 800, letterSpacing: -1, color: "#1976d2", textDecoration: "none" }}>
+          <Link href="/" style={{ fontSize: 38, fontWeight: 800, letterSpacing: -1, color: "#1976d2", textDecoration: "none" }}>
             nest-wallet
           </Link>
           <div style={{ display: "flex", gap: 8 }}>
             <Link href="/login">
-              <button style={{ borderRadius: 999, padding: "8px 20px", fontWeight: 600, background: "transparent", border: "1px solid #1976d2", color: "#1976d2", cursor: "pointer" }}>로그인</button>
+              <button style={{fontSize: 18, borderRadius: 999, padding: "8px 20px", fontWeight: 600, background: "transparent", border: "1px solid #1976d2", color: "#1976d2", cursor: "pointer" }}>로그인</button>
             </Link>
             <Link href="/signup">
-              <button style={{ borderRadius: 999, padding: "8px 20px", fontWeight: 600, background: "#1976d2", color: "#fff", border: 0, cursor: "pointer" }}>회원가입</button>
+              <button style={{ fontSize: 18,borderRadius: 999, padding: "8px 20px", fontWeight: 600, background: "#1976d2", color: "#fff", border: 0, cursor: "pointer" }}>회원가입</button>
             </Link>
           </div>
         </div>
