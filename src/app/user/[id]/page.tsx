@@ -1,18 +1,33 @@
-import { notFound } from "next/navigation";
+'use client';
 
-async function getUserInfo(id: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/users/${id}`);
-  if (!res.ok) return null;
-  return res.json();
-}
+import { useUser } from '@/hooks/useUser';
+import { recentlyViewedUsersAtom } from '@/store/atoms';
+import { useAtom } from 'jotai';
+import { useEffect } from 'react';
+import { notFound } from 'next/navigation';
 
-export default async function UserPage(props: { params: { id: string } }) {
-  const { params } = props;
-  // Next.js 14+에서는 params를 await 해야 함
-  const awaitedParams = await params;
-  const user = await getUserInfo(awaitedParams.id);
-  if (!user) return notFound();
+export default function UserPage({ params }: { params: { id: string } }) {
+  const { data: user, isLoading, error } = useUser(params.id);
+  const [recentlyViewedUsers, setRecentlyViewedUsers] = useAtom(recentlyViewedUsersAtom);
+
+  useEffect(() => {
+    if (user) {
+      setRecentlyViewedUsers(prev => {
+        const filtered = prev.filter(id => id !== user.id);
+        return [user.id, ...filtered].slice(0, 5); // 최근 5개만 유지
+      });
+    }
+  }, [user, setRecentlyViewedUsers]);
+
+  if (isLoading) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div>로딩 중...</div>
+      </div>
+    );
+  }
+
+  if (error || !user) return notFound();
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -23,6 +38,20 @@ export default async function UserPage(props: { params: { id: string } }) {
           <div><b>이름:</b> {user.name}</div>
           <div><b>이메일:</b> {user.email}</div>
         </div>
+        {recentlyViewedUsers.length > 1 && (
+          <div style={{ marginTop: 24 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>최근 본 사용자</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              {recentlyViewedUsers
+                .filter(id => id !== user.id)
+                .map(id => (
+                  <a key={id} href={`/user/${id}`} style={{ color: 'blue', textDecoration: 'underline' }}>
+                    사용자 {id}
+                  </a>
+                ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
