@@ -12,8 +12,8 @@ export default function UserPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     if (user) {
-      setRecentlyViewedUsers(prev => {
-        const filtered = prev.filter(id => id !== user.id);
+      setRecentlyViewedUsers((prev: string[]) => {
+        const filtered = prev.filter((id: string) => id !== user.id);
         return [user.id, ...filtered].slice(0, 5); // 최근 5개만 유지
       });
     }
@@ -43,8 +43,8 @@ export default function UserPage({ params }: { params: { id: string } }) {
             <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>최근 본 사용자</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
               {recentlyViewedUsers
-                .filter(id => id !== user.id)
-                .map(id => (
+                .filter((id: string) => id !== user.id)
+                .map((id: string) => (
                   <a key={id} href={`/user/${id}`} style={{ color: 'blue', textDecoration: 'underline' }}>
                     사용자 {id}
                   </a>
