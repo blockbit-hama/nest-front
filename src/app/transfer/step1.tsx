@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { TransferStep2 } from "./step2";
+import { useWalletBalance, useTransferEstimate } from "../../hooks/useWallet";
 
 interface TransferStep1Props {
   isOpen: boolean;
@@ -12,8 +13,9 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
   const [amount, setAmount] = useState("");
   const [toAddress, setToAddress] = useState("");
   const [showStep2, setShowStep2] = useState(false);
-  const myAddress = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e";
-  const estimatedCoupon = "2,000원";
+  
+  const { data: walletData, isLoading: isWalletLoading } = useWalletBalance();
+  const { data: estimateData } = useTransferEstimate();
 
   if (!isOpen) return null;
   if (showStep2) {
@@ -27,12 +29,40 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
         }}
         useCoupon={useCoupon}
         transferData={{
-          from: myAddress,
+          from: walletData?.address || "",
           to: toAddress,
           amount,
-          estimatedCoupon
+          estimatedCoupon: useCoupon ? (estimateData?.estimatedCoupon || "0원") : "0원"
         }}
       />
+    );
+  }
+
+  if (isWalletLoading) {
+    return (
+      <div style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000
+      }}>
+        <div style={{
+          background: "#fff",
+          borderRadius: 24,
+          padding: 32,
+          width: "90%",
+          maxWidth: 420,
+          textAlign: "center"
+        }}>
+          로딩 중...
+        </div>
+      </div>
     );
   }
 
@@ -73,7 +103,7 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
               boxSizing: "border-box",
               width: "100%"
             }}>
-              {myAddress}
+              {walletData?.address}
             </div>
           </div>
 
@@ -138,7 +168,7 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
                 boxSizing: "border-box",
                 width: "100%"
               }}>
-                {estimatedCoupon}
+                {estimateData?.estimatedCoupon || "계산 중..."}
               </div>
             </div>
           )}
@@ -171,6 +201,15 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
                   alert("전송할 금액을 입력해주세요.");
                   return;
                 }
+                
+                // 잔액 체크
+                const currentBalance = parseFloat(walletData?.ethBalance || "0");
+                const transferAmount = parseFloat(amount);
+                if (transferAmount > currentBalance) {
+                  alert("잔액이 부족합니다.");
+                  return;
+                }
+                
                 setShowStep2(true);
               }}
               style={{

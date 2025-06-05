@@ -2,19 +2,51 @@
 import Link from "next/link";
 import { useState } from "react";
 import { TransferStep1 } from "./transfer/step1";
+import { useWalletList } from "../hooks/useWallet";
 
 export default function Home() {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [useCoupon, setUseCoupon] = useState(true);
+  const [selectedWalletId, setSelectedWalletId] = useState<string>("1");
+  
+  const { data: walletList, isLoading: isWalletListLoading } = useWalletList();
+  const selectedWallet = walletList?.find(w => w.id === selectedWalletId);
 
   return (
     <div style={{ minHeight: "100vh", width: "100%", display: "flex", flexDirection: "column", background: "linear-gradient(135deg, #f0f4f8 0%, #fff 100%)" }}>
       {/* 탑바 */}
       <nav style={{ backdropFilter: "blur(8px)", background: "rgba(255,255,255,0.8)", borderBottom: "1px solid #eee", boxShadow: "0 2px 8px 0 rgba(0,0,0,0.03)", position: "sticky", top: 0, zIndex: 10 }}>
         <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "32px 0" }}>
-          <Link href="/" style={{ fontSize: 38, fontWeight: 800, letterSpacing: -1, color: "#1976d2", textDecoration: "none" }}>
-            D'CENT Wallet
-          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+            <Link href="/" style={{ fontSize: 38, fontWeight: 800, letterSpacing: -1, color: "#1976d2", textDecoration: "none" }}>
+              D'CENT Wallet
+            </Link>
+            {/* 지갑 선택 콤보박스 */}
+            <select
+              value={selectedWalletId}
+              onChange={(e) => setSelectedWalletId(e.target.value)}
+              style={{
+                padding: "8px 16px",
+                fontSize: 16,
+                borderRadius: 12,
+                border: "2px solid #bbdefb",
+                background: "#fff",
+                color: "#1976d2",
+                cursor: "pointer",
+                outline: "none"
+              }}
+            >
+              {isWalletListLoading ? (
+                <option>로딩 중...</option>
+              ) : (
+                walletList?.map(wallet => (
+                  <option key={wallet.id} value={wallet.id}>
+                    {wallet.name}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
           <div style={{ display: "flex", gap: 8 }}>
             <Link href="/login">
               <button style={{fontSize: 18, borderRadius: 999, padding: "8px 20px", fontWeight: 600, background: "transparent", border: "1px solid #1976d2", color: "#1976d2", cursor: "pointer" }}>로그인</button>
@@ -30,7 +62,7 @@ export default function Home() {
       <main style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", padding: "64px 16px" }}>
           <div style={{ width: "100%", maxWidth: 600, borderRadius: 24, padding: 48, display: "flex", flexDirection: "column", alignItems: "center", gap: 40, boxShadow: "0 8px 32px 0 rgba(25, 118, 210, 0.08)", border: "2px solid #bbdefb", background: "#fff" }}>
-            <div style={{ fontSize: 36, fontWeight: 800, marginBottom: 8, color: "#1976d2", textAlign: "center", textShadow: "0 2px 8px #e3f2fd" }}>My Ethereum Wallet - 1 </div>
+            <div style={{ fontSize: 36, fontWeight: 800, marginBottom: 8, color: "#1976d2", textAlign: "center", textShadow: "0 2px 8px #e3f2fd" }}>{selectedWallet?.name || "지갑을 선택해주세요"}</div>
             
             {/* 자산 정보 */}
             <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 24 }}>

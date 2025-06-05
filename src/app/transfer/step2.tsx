@@ -1,4 +1,5 @@
 "use client";
+import { useWalletBalance } from "../../hooks/useWallet";
 
 interface TransferStep2Props {
   isOpen: boolean;
@@ -14,10 +15,40 @@ interface TransferStep2Props {
 }
 
 export const TransferStep2 = ({ isOpen, onClose, onConfirm, useCoupon, transferData }: TransferStep2Props) => {
-  const remainingEth = (3 - parseFloat(transferData.amount || "0")).toFixed(2);
-  const remainingCoupon = (10000 - parseInt(transferData.estimatedCoupon.replace(/[^0-9]/g, ""))).toLocaleString() + "원";
-
+  const { data: walletData, isLoading } = useWalletBalance();
+  
   if (!isOpen) return null;
+  
+  if (isLoading) {
+    return (
+      <div style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000
+      }}>
+        <div style={{
+          background: "#fff",
+          borderRadius: 24,
+          padding: 32,
+          width: "90%",
+          maxWidth: 420,
+          textAlign: "center"
+        }}>
+          로딩 중...
+        </div>
+      </div>
+    );
+  }
+
+  const remainingEth = (parseFloat(walletData?.ethBalance || "0") - parseFloat(transferData.amount || "0")).toFixed(2);
+  const remainingCoupon = (walletData?.couponBalance || 0) - parseInt(transferData.estimatedCoupon.replace(/[^0-9]/g, ""));
 
   return (
     <div style={{
@@ -145,7 +176,7 @@ export const TransferStep2 = ({ isOpen, onClose, onConfirm, useCoupon, transferD
                     boxSizing: "border-box",
                     width: "100%"
                   }}>
-                    {remainingCoupon}
+                    {remainingCoupon.toLocaleString()}원
                   </div>
                 </div>
               </>
