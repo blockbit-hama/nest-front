@@ -26,6 +26,29 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
+      <head>
+        <style>{`
+          body {
+            background: #14151A;
+            color: #E0DFE4;
+            font-family: var(--font-geist-sans), var(--font-geist-mono), sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            box-sizing: border-box;
+          }
+          * {
+            box-sizing: inherit;
+          }
+          button, input, select {
+            font-family: inherit;
+          }
+          a {
+            color: inherit;
+            text-decoration: none;
+          }
+        `}</style>
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>{children}</Providers>
       </body>

@@ -46,19 +46,21 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        backgroundColor: "rgba(20,21,26,0.85)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         zIndex: 1000
       }}>
         <div style={{
-          background: "#fff",
+          background: "#23242A",
           borderRadius: 24,
           padding: 32,
           width: "90%",
           maxWidth: 420,
-          textAlign: "center"
+          textAlign: "center",
+          color: "#E0DFE4",
+          fontSize: 20
         }}>
           로딩 중...
         </div>
@@ -73,43 +75,45 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      backgroundColor: "rgba(20,21,26,0.85)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       zIndex: 1000
     }}>
       <div style={{
-        background: "#fff",
+        background: "#23242A",
         borderRadius: 24,
         padding: 32,
         width: "90%",
         maxWidth: 420,
-        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.1)"
+        boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+        color: "#E0DFE4"
       }}>
         <div style={{ marginBottom: 24 }}>
-          <h2 style={{ fontSize: 24, fontWeight: 700, color: "#1976d2", marginBottom: 24 }}>얼마를 보내실 건가요?</h2>
-          
+          <h2 style={{ fontSize: 24, fontWeight: 800, color: "#F2A003", marginBottom: 24, textAlign: 'center', letterSpacing: -1 }}>얼마를 보내실 건가요?</h2>
           {/* From 주소 */}
           <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", fontSize: 14, color: "#666", marginBottom: 8 }}>From:</label>
+            <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>From</label>
             <div style={{ 
               padding: "12px", 
               borderRadius: 12, 
-              background: "#f5f5f5", 
-              fontSize: 14,
+              background: "#1B1C22", 
+              fontSize: 15,
               fontFamily: "monospace",
-              color: "#333",
+              color: "#E0DFE4",
               boxSizing: "border-box",
-              width: "100%"
+              width: "100%",
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis'
             }}>
               {walletData?.address}
             </div>
           </div>
-
           {/* To 주소 입력 */}
           <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", fontSize: 14, color: "#666", marginBottom: 8 }}>To:</label>
+            <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>To</label>
             <input
               type="text"
               value={toAddress}
@@ -119,21 +123,22 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
                 width: "100%",
                 padding: "12px",
                 borderRadius: 12,
-                border: "2px solid #e0e0e0",
-                fontSize: 14,
+                border: "2px solid #23242A",
+                background: "#14151A",
+                color: "#E0DFE4",
+                fontSize: 15,
                 fontFamily: "monospace",
                 outline: "none",
                 transition: "border-color 0.2s",
                 boxSizing: "border-box"
               }}
-              onFocus={(e) => e.target.style.borderColor = "#1976d2"}
-              onBlur={(e) => e.target.style.borderColor = "#e0e0e0"}
+              onFocus={e => e.target.style.borderColor = "#F2A003"}
+              onBlur={e => e.target.style.borderColor = "#23242A"}
             />
           </div>
-
           {/* To (금액 입력) */}
           <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", fontSize: 14, color: "#666", marginBottom: 8 }}>전송할 ETH:</label>
+            <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>전송할 ETH</label>
             <input
               type="number"
               value={amount}
@@ -143,26 +148,27 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
                 width: "100%",
                 padding: "12px",
                 borderRadius: 12,
-                border: "2px solid #e0e0e0",
-                fontSize: 16,
+                border: "2px solid #23242A",
+                background: "#14151A",
+                color: "#E0DFE4",
+                fontSize: 17,
                 outline: "none",
                 transition: "border-color 0.2s",
                 boxSizing: "border-box"
               }}
-              onFocus={(e) => e.target.style.borderColor = "#1976d2"}
-              onBlur={(e) => e.target.style.borderColor = "#e0e0e0"}
+              onFocus={e => e.target.style.borderColor = "#F2A003"}
+              onBlur={e => e.target.style.borderColor = "#23242A"}
             />
           </div>
-
           {/* 예상 쿠폰 사용량 */}
           {useCoupon && (
             <div style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", fontSize: 14, color: "#666", marginBottom: 8 }}>예상 쿠폰 사용량:</label>
+              <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>예상 쿠폰 사용량</label>
               <div style={{ 
                 padding: "12px", 
                 borderRadius: 12, 
-                background: "#e3f2fd", 
-                color: "#1976d2",
+                background: "#1B1C22", 
+                color: "#F2A003",
                 fontSize: 16,
                 fontWeight: 600,
                 boxSizing: "border-box",
@@ -172,20 +178,19 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
               </div>
             </div>
           )}
-
           {/* 버튼 그룹 */}
           <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
             <button
               onClick={onClose}
               style={{
                 flex: 1,
-                padding: "12px 24px",
+                padding: "14px 0",
                 borderRadius: 12,
-                border: "1px solid #1976d2",
+                border: "1.5px solid #F2A003",
                 background: "transparent",
-                color: "#1976d2",
-                fontSize: 16,
-                fontWeight: 600,
+                color: "#F2A003",
+                fontSize: 18,
+                fontWeight: 700,
                 cursor: "pointer"
               }}
             >
@@ -201,7 +206,6 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
                   alert("전송할 금액을 입력해주세요.");
                   return;
                 }
-                
                 // 잔액 체크
                 const currentBalance = parseFloat(walletData?.ethBalance || "0");
                 const transferAmount = parseFloat(amount);
@@ -209,18 +213,17 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
                   alert("잔액이 부족합니다.");
                   return;
                 }
-                
                 setShowStep2(true);
               }}
               style={{
                 flex: 1,
-                padding: "12px 24px",
+                padding: "14px 0",
                 borderRadius: 12,
                 border: "none",
-                background: "#1976d2",
-                color: "#fff",
-                fontSize: 16,
-                fontWeight: 600,
+                background: "#F2A003",
+                color: "#14151A",
+                fontSize: 18,
+                fontWeight: 700,
                 cursor: "pointer"
               }}
             >
