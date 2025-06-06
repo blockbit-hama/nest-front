@@ -24,12 +24,12 @@ const fetchWalletList = async (): Promise<WalletInfo[]> => {
   return [
     {
       id: "1",
-      name: "My Ethereum Wallet - 1",
+      name: "My ETH Wallet",
       address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
     },
     {
       id: "2",
-      name: "My Ethereum Wallet - 2",
+      name: "My BTC Wallet",
       address: "0x742d35Cc6634C0532925a3b844Bc454e4438f45e"
     }
   ];

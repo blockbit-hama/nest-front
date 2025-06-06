@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { TransferStep1 } from "./transfer/step1";
 import { useWalletList } from "../hooks/useWallet";
+import { CustomSelect } from "./components/CustomSelect";
 
 // 더 세련된 코인 SVG 아이콘들 (gradient, 입체감, 라인 등)
 const BtcIcon = ({ size = 54 }: { size?: number }) => (
@@ -112,9 +113,10 @@ export default function Home() {
   const [useCoupon, setUseCoupon] = useState(true);
   const [selectedWalletId, setSelectedWalletId] = useState<string>("1");
   const [profileOpen, setProfileOpen] = useState(false);
-  const [balanceType, setBalanceType] = useState<'잔액' | 'NFT' | '포인트'>('잔액');
-  const balanceOptions = ['잔액', 'NFT', '포인트'] as const;
-  const coinListMap: Record<'잔액' | 'NFT' | '포인트', Coin[]> = {
+  const [balanceType, setBalanceType] = useState<'잔액' | 'NFT' | '쿠폰'>('잔액');
+  const [selectedCouponId, setSelectedCouponId] = useState<string>("");
+  const balanceOptions = ['잔액', 'NFT', '쿠폰'] as const;
+  const coinListMap: Record<'잔액' | 'NFT' | '쿠폰', Coin[]> = {
     '잔액': [
       {
         symbol: 'BTC', name: 'BTC', amount: '0.55514',
@@ -135,14 +137,21 @@ export default function Home() {
     'NFT': [
       { symbol: 'NFT', name: 'NFT', amount: '3', usd: '$0', change: '', changeColor: '#A0A0B0', subAmount: '', subUsd: 'NFT 3개' }
     ],
-    '포인트': [
-      { symbol: 'P', name: '포인트', amount: '100,000', usd: '$0', change: '', changeColor: '#A0A0B0', subAmount: '', subUsd: '100,000P' }
+    '쿠폰': [
+      // 포인트 관련 데이터 완전히 삭제
     ]
   };
   const coinList = coinListMap[balanceType];
   
   const { data: walletList, isLoading: isWalletListLoading } = useWalletList();
   const selectedWallet = walletList?.find(w => w.id === selectedWalletId);
+
+  const couponList = [
+    { id: 'c1', name: '웰컴 쿠폰', amount: 10000, expireAt: '2025-06-15' },
+    { id: 'c2', name: '이벤트 쿠폰', amount: 5000, expireAt: '2024-12-31' },
+    { id: 'c3', name: 'VIP 쿠폰', amount: 20000, expireAt: '2025-01-01' },
+  ];
+  const filteredCouponList = couponList.filter(c => c.name !== '포인트');
 
   // 코인별 아이콘 매핑
   const getCoinIcon = (symbol: string, size: number = 54) => {
@@ -152,41 +161,30 @@ export default function Home() {
     return <span style={{ width: size, height: size, display: 'inline-block' }} />;
   };
 
+  // 총 쿠폰 금액 계산
+  const totalCouponAmount = couponList.reduce((sum, c) => sum + c.amount, 0);
+
   return (
     <div style={{ minHeight: "100vh", width: "100%", display: "flex", flexDirection: "column", background: "#14151A", position: "relative", fontFamily: "inherit" }}>
       {/* 탑바 */}
       <nav style={{ width: "100%", background: "rgba(20,21,26,0.98)", borderBottom: "1px solid #23242A", position: "sticky", top: 0, zIndex: 10, padding: "0 0 0 0" }}>
         <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", height: 72, padding: "0 16px" }}>
           {/* 지갑 콤보박스 + 드롭다운 아이콘 */}
-          <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-            <select
+          <div style={{ width: 240 }}>
+            <CustomSelect
               value={selectedWalletId}
-              onChange={e => setSelectedWalletId(e.target.value)}
-              style={{
-                background: "#23242A",
-                color: "#E0DFE4",
-                border: "none",
-                borderRadius: 12,
-                fontSize: 22,
-                fontWeight: 700,
-                padding: "12px 36px 12px 28px",
-                outline: "none",
-                minWidth: 140,
-                appearance: 'none',
-                MozAppearance: 'none',
-                WebkitAppearance: 'none',
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
-              }}
-            >
-              {isWalletListLoading ? (
-                <option>로딩 중...</option>
-              ) : (
-                walletList?.map(wallet => (
-                  <option key={wallet.id} value={wallet.id}>{wallet.name}</option>
-                ))
-              )}
-            </select>
-            <div style={{ position: 'absolute', right: 12, pointerEvents: 'none' }}><DropdownIcon /></div>
+              options={
+                isWalletListLoading
+                  ? [{ value: '', label: '로딩 중...' }]
+                  : (walletList || []).map(w => ({ value: w.id, label: w.name }))
+              }
+              onChange={setSelectedWalletId}
+              width={240}
+              height={56}
+              fontSize={20}
+              padding="18px 48px 18px 24px"
+              accentColor="#F2A003"
+            />
           </div>
           {/* QR 코드 아이콘 버튼 (강조색) */}
           <button
@@ -217,14 +215,10 @@ export default function Home() {
         <div style={{ width: "100%", marginTop: 40, marginBottom: 32, display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
           <div style={{ fontSize: 36, fontWeight: 800, color: "#E0DFE4", letterSpacing: -1, textAlign: "center" }}>$1,234.56</div>
           <div style={{ fontSize: 18, color: "#A0A0B0", fontWeight: 600, marginBottom: 6 }}>3.00000 ETH</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ fontSize: 17, color: "#F2A003", fontWeight: 700, marginTop: 4 }}>10,000원 쿠폰</div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', marginTop: 4 }}>
-              <input type="checkbox" checked={useCoupon} onChange={() => setUseCoupon(v => !v)} style={{ accentColor: '#F2A003', width: 18, height: 18, margin: 0 }} />
-              <span style={{ color: '#F2A003', fontWeight: 600, fontSize: 14 }}>사용</span>
-            </label>
+          {/* 총 쿠폰 금액: 항상 전송/수신 버튼 위에만 노출 */}
+          <div style={{ fontSize: 17, color: "#F2A003", fontWeight: 700, marginTop: 2 }}>
+            총 쿠폰: {totalCouponAmount.toLocaleString()}원
           </div>
-          <div style={{ fontSize: 13, color: '#A0A0B0', marginTop: 2 }}>유효기간: 2025년 6월 15일</div>
         </div>
         {/* 전송/수신/스왑 버튼 */}
         <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 20, marginBottom: 36, padding: '0 40px' }}>
@@ -240,27 +234,18 @@ export default function Home() {
           </button>
         </div>
         {/* 잔액 콤보박스 */}
-        <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>
-          <select
+        <div style={{ width: 120, marginLeft: 'auto', marginBottom: 10 }}>
+          <CustomSelect
             value={balanceType}
-            onChange={e => setBalanceType(e.target.value as '잔액' | 'NFT' | '포인트')}
-            style={{
-              background: "#23242A",
-              color: "#E0DFE4",
-              border: "none",
-              borderRadius: 10,
-              fontSize: 16,
-              fontWeight: 600,
-              padding: "8px 18px",
-              outline: "none",
-              minWidth: 90,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
-            }}
-          >
-            {balanceOptions.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
+            options={balanceOptions.map(opt => ({ value: opt, label: opt }))}
+            onChange={v => setBalanceType(v as typeof balanceType)}
+            width={120}
+            height={40}
+            fontSize={15}
+            padding="8px 32px 8px 16px"
+            accentColor="#F2A003"
+            style={{ minWidth: 90 }}
+          />
         </div>
         {/* 잔액 리스트 */}
         <div style={{ width: "100%", background: "none", borderRadius: 18, padding: 0, marginBottom: 20, display: "flex", flexDirection: "column", gap: 24 }}>
@@ -278,6 +263,21 @@ export default function Home() {
             </div>
           ))}
         </div>
+        {/* 쿠폰 리스트: balanceType이 '쿠폰'일 때만 노출, 리스트 위에는 아무 정보도 없음 */}
+        {balanceType === '쿠폰' && (
+          <div style={{ width: '100%', marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {filteredCouponList.map(coupon => (
+              <div key={coupon.id} style={{
+                display: 'flex', alignItems: 'center', background: '#1B1C22', borderRadius: 12, padding: '16px 20px', fontWeight: 700, border: '2px solid #23242A', boxShadow: 'none', transition: 'border 0.2s, box-shadow 0.2s', gap: 12
+              }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 18, color: '#E0DFE4' }}>{coupon.name} <span style={{ color: '#F2A003', fontWeight: 800 }}>{coupon.amount.toLocaleString()}원</span></div>
+                  <div style={{ fontSize: 13, color: '#A0A0B0', marginTop: 2 }}>유효기간: {coupon.expireAt}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         {/* D'Cent Wallet 워터마크 */}
         <div style={{ width: '100%', textAlign: 'center', marginBottom: 16 }}>
           <span style={{ fontSize: 32, fontWeight: 800, color: '#E0DFE4', opacity: 0.12, letterSpacing: 2 }}>D'Cent Wallet</span>
