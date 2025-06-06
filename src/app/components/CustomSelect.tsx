@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { selectButtonStyle, dropdownMenuStyle, dropdownOptionStyle } from '../styles/customSelectStyles';
 
 interface Option {
   value: string;
@@ -52,25 +53,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen(o => !o)}
-        style={{
-          width: '100%',
-          height,
-          background: '#23242A',
-          color: selected ? '#E0DFE4' : '#A0A0B0',
-          border: open ? `2px solid ${accentColor}` : '2px solid #23242A',
-          borderRadius: 14,
-          fontSize,
-          fontWeight: 700,
-          padding,
-          paddingRight: 48,
-          textAlign: 'left',
-          outline: 'none',
-          boxShadow: open ? '0 4px 16px rgba(0,0,0,0.18)' : '0 2px 8px rgba(0,0,0,0.08)',
-          cursor: 'pointer',
-          position: 'relative',
-          transition: 'border 0.2s, box-shadow 0.2s',
-          minHeight: height
-        }}
+        css={selectButtonStyle(open, accentColor, height, fontSize, padding)}
+        style={{ color: selected ? '#E0DFE4' : '#A0A0B0' }}
       >
         <span style={{
           display: 'inline-block',
@@ -92,20 +76,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         <div
           role="listbox"
           tabIndex={-1}
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 'calc(100% + 6px)',
-            background: '#23242A',
-            borderRadius: 14,
-            boxShadow: '0 8px 32px 0 rgba(0,0,0,0.18)',
-            zIndex: 1000,
-            padding: 6,
-            maxHeight: 320,
-            overflowY: 'auto',
-            border: `2px solid ${accentColor}`
-          }}
+          css={dropdownMenuStyle(accentColor)}
         >
           {options.map(opt => (
             <div
@@ -115,21 +86,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
               tabIndex={0}
               onClick={() => { onChange(opt.value); setOpen(false); }}
               onKeyDown={e => { if (e.key === 'Enter') { onChange(opt.value); setOpen(false); }}}
-              style={{
-                padding: '14px 24px',
-                fontSize,
-                fontWeight: 700,
-                color: opt.value === value ? accentColor : '#E0DFE4',
-                background: opt.value === value ? '#1B1C22' : 'transparent',
-                borderRadius: 10,
-                cursor: 'pointer',
-                marginBottom: 2,
-                outline: 'none',
-                transition: 'background 0.15s, color 0.15s',
-                height: typeof height === 'number' ? height - 8 : undefined,
-                display: 'flex',
-                alignItems: 'center',
-              }}
+              css={dropdownOptionStyle(opt.value === value, accentColor, fontSize, height)}
             >
               <span style={{
                 display: 'inline-block',

@@ -1,5 +1,14 @@
-"use client";
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 import { useWalletBalance } from "../../hooks/useWallet";
+import {
+  modalBgStyle,
+  modalBoxStyle,
+  sectionStyle,
+  cardStyle,
+  labelStyle,
+  buttonGroupStyle
+} from './styles';
 
 interface TransferStep2Props {
   isOpen: boolean;
@@ -50,29 +59,11 @@ export const TransferStep2 = ({ isOpen, onClose, onConfirm, useCoupon, transferD
   
   if (isLoading) {
     return (
-      <div style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(20,21,26,0.85)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000
-      }}>
-        <div style={{
-          background: "#23242A",
-          borderRadius: 24,
-          padding: 32,
-          width: "90%",
-          maxWidth: 420,
-          textAlign: "center",
-          color: "#E0DFE4",
-          fontSize: 20
-        }}>
-          로딩 중...
+      <div css={modalBgStyle}>
+        <div css={modalBoxStyle}>
+          <div css={sectionStyle}>
+            <h2 css={css`font-size: 24px; font-weight: 800; color: #F2A003; margin-bottom: 24px; text-align: center; letter-spacing: -1px;`}>로딩 중...</h2>
+          </div>
         </div>
       </div>
     );
@@ -82,73 +73,28 @@ export const TransferStep2 = ({ isOpen, onClose, onConfirm, useCoupon, transferD
   const remainingCoupon = (walletData?.couponBalance || 0) - parseInt(transferData.estimatedCoupon.replace(/[^0-9]/g, ""));
 
   return (
-    <div style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: "rgba(20,21,26,0.85)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 1000
-    }}>
-      <div style={{
-        background: "#23242A",
-        borderRadius: 24,
-        padding: 32,
-        width: "90%",
-        maxWidth: 420,
-        boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
-        color: "#E0DFE4"
-      }}>
-        <div style={{ marginBottom: 24 }}>
-          <h2 style={{ fontSize: 24, fontWeight: 800, color: "#F2A003", marginBottom: 24, textAlign: 'center', letterSpacing: -1 }}>이렇게 송금 될 거에요!</h2>
+    <div css={modalBgStyle}>
+      <div css={modalBoxStyle}>
+        <div css={sectionStyle}>
+          <h2 css={{ fontSize: 24, fontWeight: 800, color: "#F2A003", marginBottom: 24, textAlign: 'center', letterSpacing: -1 }}>이렇게 송금 될 거에요!</h2>
           
           {/* 전송 정보 */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div css={sectionStyle}>
             {/* From */}
-            <div>
-              <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>From</label>
-              <div style={{ 
-                padding: "12px",
-                borderRadius: 12,
-                background: "#1B1C22",
-                fontSize: 15,
-                fontFamily: "monospace",
-                color: "#E0DFE4",
-                boxSizing: "border-box",
-                width: "100%",
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-                display: 'flex', alignItems: 'center'
-              }}>
+            <div css={sectionStyle}>
+              <label css={labelStyle}>From</label>
+              <div css={cardStyle}>
                 {transferData.from && <AddressIcon address={transferData.from} size={22} />}
                 {transferData.from}
               </div>
             </div>
 
             {/* To */}
-            <div>
-              <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>To</label>
-              <div style={{ 
-                padding: "12px",
-                borderRadius: 12,
-                background: "#1B1C22",
-                fontSize: 15,
-                fontFamily: "monospace",
-                color: "#E0DFE4",
-                boxSizing: "border-box",
-                width: "100%",
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-                display: 'flex', alignItems: 'center', gap: 8
-              }}>
+            <div css={sectionStyle}>
+              <label css={labelStyle}>To</label>
+              <div css={cardStyle}>
                 {transferData.to && <AddressIcon address={transferData.to} size={22} />}
-                <span style={{ fontWeight: 700, color: '#F2A003', marginRight: 8 }}>
+                <span css={{ fontWeight: 700, color: '#F2A003', marginRight: 8 }}>
                   {(recentAddressList.find(a => a.address === transferData.to)?.label) || '사용자 지정'}
                 </span>
                 {transferData.to}
@@ -156,70 +102,34 @@ export const TransferStep2 = ({ isOpen, onClose, onConfirm, useCoupon, transferD
             </div>
 
             {/* 보내는 금액 */}
-            <div>
-              <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>보내는 금액</label>
-              <div style={{ 
-                padding: "12px",
-                borderRadius: 12,
-                background: "#1B1C22",
-                color: "#F2A003",
-                fontSize: 17,
-                fontWeight: 700,
-                boxSizing: "border-box",
-                width: "100%"
-              }}>{transferData.amount} ETH</div>
+            <div css={sectionStyle}>
+              <label css={labelStyle}>보내는 금액</label>
+              <div css={{ ...cardStyle, color: "#F2A003", fontSize: 17, fontWeight: 700 }}>{transferData.amount} ETH</div>
             </div>
 
             {/* 사용 쿠폰 */}
-            <div>
-              <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>사용 쿠폰</label>
-              <div style={{ 
-                padding: "12px",
-                borderRadius: 12,
-                background: "#1B1C22",
-                color: transferData.couponName ? "#F2A003" : "#A0A0B0",
-                fontSize: 17,
-                fontWeight: 700,
-                boxSizing: "border-box",
-                width: "100%"
-              }}>{transferData.couponName ? `${transferData.couponName}${usedCoupon ? ` (${usedCoupon.amount.toLocaleString()}원)` : ''}` : '쿠폰 없음'}</div>
+            <div css={sectionStyle}>
+              <label css={labelStyle}>사용 쿠폰</label>
+              <div css={{ ...cardStyle, color: transferData.couponName ? "#F2A003" : "#A0A0B0", fontSize: 17, fontWeight: 700 }}>{transferData.couponName ? `${transferData.couponName}${usedCoupon ? ` (${usedCoupon.amount.toLocaleString()}원)` : ''}` : '쿠폰 없음'}</div>
             </div>
 
             {/* 네트워크 수수료 (예상) */}
-            <div>
-              <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 4 }}>네트워크 수수료 (예상)</label>
-              <div style={{
-                padding: "10px 16px",
-                borderRadius: 10,
-                background: "#1B1C22",
-                color: "#fff",
-                fontSize: 16,
-                fontWeight: 700,
-                boxSizing: "border-box",
-                width: "100%"
-              }}>{transferData.estimatedCoupon || '계산 중...'}</div>
+            <div css={sectionStyle}>
+              <label css={labelStyle}>네트워크 수수료 (예상)</label>
+              <div css={{ ...cardStyle, padding: "10px 16px", fontWeight: 700 }}>{transferData.estimatedCoupon || '계산 중...'}</div>
             </div>
             {/* 네트워크 속도 (예상) */}
-            <div style={{ marginBottom: 8 }}>
-              <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 4 }}>네트워크 속도 (예상)</label>
-              <div style={{
-                padding: "10px 16px",
-                borderRadius: 10,
-                background: "#1B1C22",
-                color: "#fff",
-                fontSize: 16,
-                fontWeight: 700,
-                boxSizing: "border-box",
-                width: "100%"
-              }}>12초</div>
+            <div css={sectionStyle}>
+              <label css={labelStyle}>네트워크 속도 (예상)</label>
+              <div css={{ ...cardStyle, padding: "10px 16px", fontWeight: 700 }}>12초</div>
             </div>
           </div>
 
           {/* 버튼 그룹 */}
-          <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
+          <div css={buttonGroupStyle}>
             <button
               onClick={onClose}
-              style={{
+              css={{
                 flex: 1,
                 padding: "14px 0",
                 borderRadius: 12,
@@ -235,7 +145,7 @@ export const TransferStep2 = ({ isOpen, onClose, onConfirm, useCoupon, transferD
             </button>
             <button
               onClick={onConfirm}
-              style={{
+              css={{
                 flex: 1,
                 padding: "14px 0",
                 borderRadius: 12,

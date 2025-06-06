@@ -1,9 +1,42 @@
 "use client";
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { TransferStep1 } from "./transfer/step1";
 import { useWalletList } from "../hooks/useWallet";
 import { CustomSelect } from "./components/CustomSelect";
+import {
+  topBarStyle,
+  mainBoxStyle,
+  cardStyle,
+  tabBarStyle,
+  homeContainerStyle,
+  topBarInnerStyle,
+  walletComboBoxStyle,
+  profileDropdownButtonStyle,
+  profileDropdownMenuStyle,
+  profileDropdownLinkStyle,
+  mainSummaryBoxStyle,
+  mainSummaryAmountStyle,
+  mainSummaryEthStyle,
+  mainSummaryCouponStyle,
+  mainActionButtonGroupStyle,
+  mainActionButtonStyle,
+  mainActionSwapButtonStyle,
+  balanceComboBoxStyle,
+  balanceListStyle,
+  balanceCardInnerStyle,
+  balanceCardNameStyle,
+  balanceCardUsdStyle,
+  balanceCardAmountStyle,
+  balanceCardSubUsdStyle,
+  couponListStyle,
+  couponCardStyle,
+  couponCardNameStyle,
+  couponCardExpireStyle,
+  watermarkStyle
+} from './styles/homeStyles';
 
 // 더 세련된 코인 SVG 아이콘들 (gradient, 입체감, 라인 등)
 const BtcIcon = ({ size = 54 }: { size?: number }) => (
@@ -164,13 +197,25 @@ export default function Home() {
   // 총 쿠폰 금액 계산
   const totalCouponAmount = couponList.reduce((sum, c) => sum + c.amount, 0);
 
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    if (profileOpen) document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [profileOpen]);
+
   return (
-    <div style={{ minHeight: "100vh", width: "100%", display: "flex", flexDirection: "column", background: "#14151A", position: "relative", fontFamily: "inherit" }}>
+    <div css={css`min-height: 100vh; width: 100%; display: flex; flex-direction: column; background: "#14151A"; position: "relative"; font-family: "inherit";`}>
       {/* 탑바 */}
-      <nav style={{ width: "100%", background: "rgba(20,21,26,0.98)", borderBottom: "1px solid #23242A", position: "sticky", top: 0, zIndex: 10, padding: "0 0 0 0" }}>
-        <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", height: 72, padding: "0 16px" }}>
+      <nav css={topBarStyle}>
+        <div css={css`max-width: 480px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 88px; padding: 0 16px;`}>
           {/* 지갑 콤보박스 + 드롭다운 아이콘 */}
-          <div style={{ width: 240 }}>
+          <div css={css`width: 260px;`}>
             <CustomSelect
               value={selectedWalletId}
               options={
@@ -179,62 +224,200 @@ export default function Home() {
                   : (walletList || []).map(w => ({ value: w.id, label: w.name }))
               }
               onChange={setSelectedWalletId}
-              width={240}
-              height={56}
-              fontSize={20}
-              padding="18px 48px 18px 24px"
+              width={260}
+              height={68}
+              fontSize={24}
+              padding="20px 56px 20px 28px"
               accentColor="#F2A003"
             />
           </div>
-          {/* QR 코드 아이콘 버튼 (강조색) */}
-          <button
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: "50%",
-              background: "#23242A",
-              border: "none",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: "#F2A003",
-              fontSize: 24,
-              fontWeight: 700
-            }}
-            aria-label="QR 코드"
-          >
-            <QrIcon />
-          </button>
+          {/* 프로필/로그인 드롭다운 버튼 */}
+          <div ref={profileRef} css={css`position: relative;`}>
+            <button
+              css={css`
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                background: #23242A;
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: #F2A003;
+                font-size: 24px;
+                font-weight: 700;
+                position: relative;
+              `}
+              aria-label="프로필"
+              onClick={() => setProfileOpen((v) => !v)}
+            >
+              <QrIcon />
+            </button>
+            {profileOpen && (
+              <div
+                css={css`
+                  position: absolute;
+                  top: 54px;
+                  right: 0;
+                  min-width: 160px;
+                  background: #23242A;
+                  border-radius: 14px;
+                  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.18);
+                  border: 2px solid #F2A003;
+                  z-index: 1000;
+                  padding: 8px 0;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 2px;
+                `}
+              >
+                <Link
+                  href="/login"
+                  css={css`
+                    padding: 18px 32px;
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: #E0DFE4;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    transition: background 0.15s, color 0.15s;
+                    display: block;
+                    &:hover {
+                      background: #1B1C22;
+                      color: #F2A003;
+                    }
+                  `}
+                >
+                  로그인
+                </Link>
+                <Link
+                  href="/signup"
+                  css={css`
+                    padding: 18px 32px;
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: #E0DFE4;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    transition: background 0.15s, color 0.15s;
+                    display: block;
+                    &:hover {
+                      background: #1B1C22;
+                      color: #F2A003;
+                    }
+                  `}
+                >
+                  회원가입
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 
       {/* 메인 컨텐츠 */}
-      <main style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", width: "100%", maxWidth: 480, margin: "0 auto", padding: "0 0 80px 0" }}>
+      <main css={mainBoxStyle}>
         {/* 내 ETH/달러/쿠폰 */}
-        <div style={{ width: "100%", marginTop: 40, marginBottom: 32, display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-          <div style={{ fontSize: 36, fontWeight: 800, color: "#E0DFE4", letterSpacing: -1, textAlign: "center" }}>$1,234.56</div>
-          <div style={{ fontSize: 18, color: "#A0A0B0", fontWeight: 600, marginBottom: 6 }}>3.00000 ETH</div>
+        <div css={css`
+          width: 100%;
+          max-width: 480px;
+          margin: 8px auto 32px auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+        `}>
+          <div css={css`font-size: 48px; font-weight: 800; color: #E0DFE4; letter-spacing: -1.5px; text-align: center; line-height: 1.1;`}>$1,234.56</div>
+          <div css={css`font-size: 24px; color: #A0A0B0; font-weight: 700; margin-bottom: 4px;`}>3.00000 ETH</div>
           {/* 총 쿠폰 금액: 항상 전송/수신 버튼 위에만 노출 */}
-          <div style={{ fontSize: 17, color: "#F2A003", fontWeight: 700, marginTop: 2 }}>
+          <div css={css`font-size: 24px; color: #F2A003; font-weight: 800; margin-top: 2px; margin-bottom: 18px;`}>
             총 쿠폰: {totalCouponAmount.toLocaleString()}원
           </div>
         </div>
         {/* 전송/수신/스왑 버튼 */}
-        <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 20, marginBottom: 36, padding: '0 40px' }}>
+        <div css={css`
+          width: calc(100% - 32px);
+          max-width: 432px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          margin-bottom: 28px;
+          padding: 0;
+        `}>
           <button 
-            style={{ width: "75%", border: "none", borderRadius: 24, background: "#F2A003", color: "#14151A", fontWeight: 700, fontSize: 22, height: 58, lineHeight: '58px', marginRight: 0, cursor: "pointer", boxShadow: "0 2px 8px rgba(242,160,3,0.08)", display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, textAlign: 'center' }}
+            css={css`
+              flex: 0.9;
+              min-width: 0;
+              border: none;
+              border-radius: 24px;
+              background: #F2A003;
+              color: #14151A;
+              font-weight: 700;
+              font-size: 22px;
+              height: 58px;
+              line-height: 58px;
+              cursor: pointer;
+              box-shadow: 0 2px 8px rgba(242,160,3,0.08);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 0;
+              text-align: center;
+            `}
             onClick={() => setIsTransferModalOpen(true)}
           >전송</button>
           <button 
-            style={{ width: "75%", border: "none", borderRadius: 24, background: "#E0DFE4", color: "#14151A", fontWeight: 700, fontSize: 22, height: 58, lineHeight: '58px', marginLeft: 0, cursor: "pointer", boxShadow: "0 2px 8px rgba(224,223,228,0.08)", display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, textAlign: 'center' }}
+            css={css`
+              flex: 0.9;
+              min-width: 0;
+              border: none;
+              border-radius: 24px;
+              background: #E0DFE4;
+              color: #14151A;
+              font-weight: 700;
+              font-size: 22px;
+              height: 58px;
+              line-height: 58px;
+              cursor: pointer;
+              box-shadow: 0 2px 8px rgba(224,223,228,0.08);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 0;
+              text-align: center;
+            `}
           >수신</button>
-          <button style={{ width: 58, height: 58, minWidth: 58, minHeight: 58, aspectRatio: '1/1', borderRadius: "50%", background: "#23242A", color: "#F2A003", border: "none", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, fontWeight: 700, marginLeft: 0, cursor: "pointer", boxShadow: "0 2px 8px rgba(242,160,3,0.08)", flexShrink: 0 }}>
+          <button css={css`
+            width: 58px;
+            height: 58px;
+            min-width: 58px;
+            min-height: 58px;
+            aspect-ratio: 1/1;
+            border-radius: 50%;
+            background: #23242A;
+            color: #F2A003;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(242,160,3,0.08);
+            flex-shrink: 0;
+          `}>
             <SwapIcon color="#F2A003" />
           </button>
         </div>
         {/* 잔액 콤보박스 */}
-        <div style={{ width: 120, marginLeft: 'auto', marginBottom: 10 }}>
+        <div css={css`
+          width: 120px;
+          margin-left: auto;
+          margin-bottom: 10px;
+          margin-right: 16px;
+        `}>
           <CustomSelect
             value={balanceType}
             options={balanceOptions.map(opt => ({ value: opt, label: opt }))}
@@ -248,67 +431,101 @@ export default function Home() {
           />
         </div>
         {/* 잔액 리스트 */}
-        <div style={{ width: "100%", background: "none", borderRadius: 18, padding: 0, marginBottom: 20, display: "flex", flexDirection: "column", gap: 24 }}>
+        <div css={css`
+          width: 100%;
+          max-width: 480px;
+          background: none;
+          border-radius: 20px;
+          padding: 0;
+          margin-bottom: 20px;
+          margin-left: auto;
+          margin-right: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        `}>
           {coinList.map((coin: Coin) => (
-            <div key={coin.symbol} style={{ display: "flex", alignItems: "center", gap: 16, background: "#1B1C22", borderRadius: 16, padding: 18, margin: '0 0 0 0' }}>
-              {getCoinIcon(coin.symbol, 54)}
-              <div style={{ display: "flex", flexDirection: "column", minWidth: 60, marginRight: 8 }}>
-                <span style={{ fontWeight: 500, fontSize: 22, color: "#E0DFE4", fontFamily: 'inherit', letterSpacing: -1 }}>{coin.name}</span>
-                <span style={{ fontSize: 15, color: coin.changeColor, fontWeight: 400, fontFamily: 'inherit' }}>{coin.usd} {coin.change}</span>
+            <div key={coin.symbol} css={css`
+              ${cardStyle};
+              padding: 14px 24px;
+              gap: 20px;
+            `}>
+              {getCoinIcon(coin.symbol, 60)}
+              <div css={css`display: flex; flex-direction: column; min-width: 64px; margin-right: 12px;`}>
+                <span css={css`font-weight: 600; font-size: 26.5px; color: #E0DFE4; font-family: inherit; letter-spacing: -1.5px;`}>{coin.name}</span>
+                <span css={css`font-size: 19px; color: ${coin.changeColor}; font-weight: 500; font-family: inherit;`}>{coin.usd} {coin.change}</span>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", marginLeft: "auto" }}>
-                <span style={{ fontWeight: 500, fontSize: 22, color: "#E0DFE4", fontFamily: 'inherit', letterSpacing: -1 }}>{coin.amount}</span>
-                <span style={{ fontSize: 15, color: "#A0A0B0", fontWeight: 400, fontFamily: 'inherit' }}>{coin.subUsd}</span>
+              <div css={css`display: flex; flex-direction: column; align-items: flex-end; margin-left: auto;`}>
+                <span css={css`font-weight: 700; font-size: 30.5px; color: #E0DFE4; font-family: inherit; letter-spacing: -1.5px;`}>{coin.amount}</span>
+                <span css={css`font-size: 17px; color: #A0A0B0; font-weight: 500; font-family: inherit;`}>{coin.subUsd}</span>
               </div>
             </div>
           ))}
         </div>
         {/* 쿠폰 리스트: balanceType이 '쿠폰'일 때만 노출, 리스트 위에는 아무 정보도 없음 */}
         {balanceType === '쿠폰' && (
-          <div style={{ width: '100%', marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div css={css`
+            width: calc(100% - 32px);
+            max-width: 432px;
+            margin-bottom: 16px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+          `}>
             {filteredCouponList.map(coupon => (
-              <div key={coupon.id} style={{
-                display: 'flex', alignItems: 'center', background: '#1B1C22', borderRadius: 12, padding: '16px 20px', fontWeight: 700, border: '2px solid #23242A', boxShadow: 'none', transition: 'border 0.2s, box-shadow 0.2s', gap: 12
-              }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 18, color: '#E0DFE4' }}>{coupon.name} <span style={{ color: '#F2A003', fontWeight: 800 }}>{coupon.amount.toLocaleString()}원</span></div>
-                  <div style={{ fontSize: 13, color: '#A0A0B0', marginTop: 2 }}>유효기간: {coupon.expireAt}</div>
+              <div key={coupon.id} css={css`
+                display: flex;
+                align-items: center;
+                background: #1B1C22;
+                border-radius: 12px;
+                padding: 14px 16px;
+                font-weight: 700;
+                border: 2px solid #23242A;
+                box-shadow: none;
+                transition: border 0.2s, box-shadow 0.2s;
+                gap: 10px;
+              `}>
+                <div css={css`flex: 1;`}>
+                  <div css={css`font-size: 16px; color: #E0DFE4;`}>{coupon.name} <span css={css`color: #F2A003; font-weight: 800;`}>{coupon.amount.toLocaleString()}원</span></div>
+                  <div css={css`font-size: 12px; color: #A0A0B0; margin-top: 2px;`}>유효기간: {coupon.expireAt}</div>
                 </div>
               </div>
             ))}
           </div>
         )}
         {/* D'Cent Wallet 워터마크 */}
-        <div style={{ width: '100%', textAlign: 'center', marginBottom: 16 }}>
-          <span style={{ fontSize: 32, fontWeight: 800, color: '#E0DFE4', opacity: 0.12, letterSpacing: 2 }}>D'Cent Wallet</span>
+        <div css={css`width: 100%; text-align: center; margin-bottom: 24px;`}>
+          <span css={css`font-size: 48px; font-weight: 800; color: #E0DFE4; opacity: 0.12; letter-spacing: 2px;`}>D'Cent Wallet</span>
         </div>
       </main>
 
       {/* 하단 탭바 */}
-      <nav style={{ position: "fixed", left: 0, right: 0, bottom: 0, height: 64, background: "#23242A", display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 100, maxWidth: 480, margin: "0 auto", width: "100%" }}>
+      <nav css={tabBarStyle}>
         {/* 홈 */}
-        <button style={{ background: "none", border: "none", color: "#888A92", display: "flex", flexDirection: "column", alignItems: "center", flex: 1, cursor: "pointer" }}>
+        <button css={css`background: none; border: none; color: #888A92; display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer;`}>
           <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M4 12L14 4L24 12" stroke="#888A92" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <rect x="6" y="12" width="16" height="10" rx="2" stroke="#888A92" strokeWidth="2"/>
           </svg>
         </button>
         {/* 지갑(강조) */}
-        <button style={{ background: "none", border: "none", color: "#F2A003", display: "flex", flexDirection: "column", alignItems: "center", flex: 1, cursor: "pointer" }}>
+        <button css={css`background: none; border: none; color: #F2A003; display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer;`}>
           <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="3" y="8" width="22" height="12" rx="3" stroke="#F2A003" strokeWidth="2"/>
             <rect x="18" y="13" width="4" height="2" rx="1" fill="#F2A003"/>
           </svg>
         </button>
         {/* 스왑(회색) */}
-        <button style={{ background: "none", border: "none", color: "#888A92", display: "flex", flexDirection: "column", alignItems: "center", flex: 1, cursor: "pointer" }}>
+        <button css={css`background: none; border: none; color: #888A92; display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer;`}>
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M10 20L16 26L22 20" stroke="#888A92" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M22 12L16 6L10 12" stroke="#888A92" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
         {/* 설정(회색) */}
-        <button style={{ background: "none", border: "none", color: "#888A92", display: "flex", flexDirection: "column", alignItems: "center", flex: 1, cursor: "pointer" }}>
+        <button css={css`background: none; border: none; color: #888A92; display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer;`}>
           <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="14" cy="14" r="10" stroke="#888A92" strokeWidth="2"/>
             <path d="M14 10V14L16 16" stroke="#888A92" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

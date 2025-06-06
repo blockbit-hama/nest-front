@@ -1,8 +1,21 @@
-"use client";
+/** @jsxImportSource @emotion/react */
 import { useState } from "react";
 import { TransferStep2 } from "./step2";
 import { useWalletBalance, useTransferEstimate, useWalletList } from "../../hooks/useWallet";
 import { CustomSelect } from "../components/CustomSelect";
+import { css } from '@emotion/react';
+import {
+  loadingModalBgStyle,
+  loadingModalBoxStyle,
+  modalBgStyle,
+  modalBoxStyle,
+  sectionStyle,
+  cardStyle,
+  labelStyle,
+  recentCardStyle,
+  modalCardStyle,
+  buttonGroupStyle
+} from './styles';
 
 interface TransferStep1Props {
   isOpen: boolean;
@@ -77,28 +90,8 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
 
   if (isWalletLoading) {
     return (
-      <div style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(20,21,26,0.85)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000
-      }}>
-        <div style={{
-          background: "#23242A",
-          borderRadius: 24,
-          padding: 32,
-          width: "90%",
-          maxWidth: 420,
-          textAlign: "center",
-          color: "#E0DFE4",
-          fontSize: 20
-        }}>
+      <div css={loadingModalBgStyle}>
+        <div css={loadingModalBoxStyle}>
           로딩 중...
         </div>
       </div>
@@ -106,33 +99,14 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
   }
 
   return (
-    <div style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: "rgba(20,21,26,0.85)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 1000
-    }}>
-      <div style={{
-        background: "#23242A",
-        borderRadius: 24,
-        padding: 32,
-        width: "90%",
-        maxWidth: 420,
-        boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
-        color: "#E0DFE4"
-      }}>
-        <div style={{ marginBottom: 24 }}>
-          <h2 style={{ fontSize: 24, fontWeight: 800, color: "#F2A003", marginBottom: 24, textAlign: 'center', letterSpacing: -1 }}>얼마를 보내실 건가요?</h2>
+    <div css={loadingModalBgStyle}>
+      <div css={loadingModalBoxStyle}>
+        <div css={{ marginBottom: 24 }}>
+          <h2 css={css`font-size: 24px; font-weight: 800; color: #F2A003; margin-bottom: 24px; text-align: center; letter-spacing: -1px;`}>얼마를 보내실 건가요?</h2>
           {/* From 주소 */}
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>From</label>
-            <div style={{ 
+          <div css={{ marginBottom: 20 }}>
+            <label css={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>From</label>
+            <div css={{ 
               padding: "12px", 
               borderRadius: 12, 
               background: "#1B1C22", 
@@ -149,16 +123,16 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
             </div>
           </div>
           {/* To 주소 입력 */}
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>To</label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div css={{ marginBottom: 20 }}>
+            <label css={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>To</label>
+            <div css={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {toAddress && <AddressIcon address={toAddress} size={22} />}
               <input
                 type="text"
                 value={toAddress}
                 onChange={(e) => setToAddress(e.target.value)}
                 placeholder="받는 사람의 지갑 주소를 입력하세요"
-                style={{
+                css={{
                   width: "100%",
                   padding: "12px",
                   borderRadius: 12,
@@ -171,40 +145,21 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
                   transition: "border-color 0.2s",
                   boxSizing: "border-box"
                 }}
-                onFocus={e => e.target.style.borderColor = "#F2A003"}
-                onBlur={e => e.target.style.borderColor = "#23242A"}
+                onFocus={(e) => e.target.style.borderColor = "#F2A003"}
+                onBlur={(e) => e.target.style.borderColor = "#23242A"}
               />
             </div>
             {/* 최근 전송 계좌 리스트 + 더 많이 버튼 */}
-            <div style={{ marginTop: 10, display: 'flex', gap: 10, alignItems: 'center' }}>
+            <div css={{ marginTop: 10, display: 'flex', gap: 10, alignItems: 'center' }}>
               {recentAddressList.slice(0, 2).map(item => (
                 <div
                   key={item.address}
                   onClick={() => setToAddress(item.address)}
-                  style={{
-                    background: '#23242A',
-                    borderRadius: 10,
-                    padding: '10px 16px',
-                    color: '#E0DFE4',
-                    fontSize: 14,
-                    fontFamily: 'monospace',
-                    cursor: 'pointer',
-                    border: '2px solid #23242A',
-                    transition: 'border 0.2s',
-                    minWidth: 0,
-                    flex: 1,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                    display: 'flex', alignItems: 'center'
-                  }}
-                  onMouseOver={e => (e.currentTarget.style.border = '2px solid #F2A003')}
-                  onMouseOut={e => (e.currentTarget.style.border = '2px solid #23242A')}
+                  css={recentCardStyle}
                   title={item.address}
                 >
                   <AddressIcon address={item.address} size={22} />
-                  <span style={{ fontWeight: 700, color: '#F2A003', marginRight: 8 }}>{item.label}</span>
+                  <span css={{ fontWeight: 700, color: '#F2A003', marginRight: 8 }}>{item.label}</span>
                   {item.address.slice(0, 8)}...{item.address.slice(-6)}
                 </div>
               ))}
@@ -212,7 +167,7 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
               {recentAddressList.length > 2 && (
                 <button
                   onClick={() => setShowAddressModal(true)}
-                  style={{
+                  css={{
                     background: '#23242A',
                     color: '#F2A003',
                     border: '2px solid #F2A003',
@@ -229,49 +184,38 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
             </div>
             {/* 더 많이 모달 */}
             {showAddressModal && (
-              <div style={{
-                position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                background: 'rgba(20,21,26,0.85)', zIndex: 1000,
-                display: 'flex', alignItems: 'center', justifyContent: 'center'
-              }}>
-                <div style={{
-                  background: '#23242A', borderRadius: 18, padding: 32, minWidth: 320, maxWidth: 400, width: '90%',
-                  boxShadow: '0 4px 24px rgba(0,0,0,0.3)', color: '#E0DFE4', maxHeight: 420, overflowY: 'auto'
-                }}>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: '#F2A003', marginBottom: 18, textAlign: 'center' }}>최근 전송 계좌</div>
+              <div css={modalBgStyle}>
+                <div css={modalBoxStyle}>
+                  <div css={{ fontSize: 20, fontWeight: 800, color: '#F2A003', marginBottom: 18, textAlign: 'center' }}>최근 전송 계좌</div>
                   {recentAddressList.map(item => (
                     <div
                       key={item.address}
                       onClick={() => { setToAddress(item.address); setShowAddressModal(false); }}
-                      style={{
-                        background: '#1B1C22', borderRadius: 10, padding: '12px 18px', color: '#E0DFE4', fontSize: 15, fontFamily: 'monospace', cursor: 'pointer', border: '2px solid #23242A', marginBottom: 10, transition: 'border 0.2s', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center'
-                      }}
-                      onMouseOver={e => (e.currentTarget.style.border = '2px solid #F2A003')}
-                      onMouseOut={e => (e.currentTarget.style.border = '2px solid #23242A')}
+                      css={modalCardStyle}
                       title={item.address}
                     >
                       <AddressIcon address={item.address} size={22} />
-                      <span style={{ fontWeight: 700, color: '#F2A003', marginRight: 8 }}>{item.label}</span>
+                      <span css={{ fontWeight: 700, color: '#F2A003', marginRight: 8 }}>{item.label}</span>
                       {item.address.slice(0, 8)}...{item.address.slice(-6)}
                     </div>
                   ))}
                   <button
                     onClick={() => setShowAddressModal(false)}
-                    style={{ marginTop: 18, width: '100%', background: 'none', border: 'none', color: '#A0A0B0', fontSize: 16, fontWeight: 700, cursor: 'pointer' }}
+                    css={{ marginTop: 18, width: '100%', background: 'none', border: 'none', color: '#A0A0B0', fontSize: 16, fontWeight: 700, cursor: 'pointer' }}
                   >닫기</button>
                 </div>
               </div>
             )}
           </div>
           {/* To (금액 입력) */}
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>전송할 ETH</label>
+          <div css={{ marginBottom: 20 }}>
+            <label css={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>전송할 ETH</label>
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.0"
-              style={{
+              css={{
                 width: "100%",
                 padding: "12px",
                 borderRadius: 12,
@@ -283,18 +227,18 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
                 transition: "border-color 0.2s",
                 boxSizing: "border-box"
               }}
-              onFocus={e => e.target.style.borderColor = "#F2A003"}
-              onBlur={e => e.target.style.borderColor = "#23242A"}
+              onFocus={(e) => e.target.style.borderColor = "#F2A003"}
+              onBlur={(e) => e.target.style.borderColor = "#23242A"}
             />
             {/* 잔액 : ... ETH */}
-            <div style={{ fontSize: 14, color: '#A0A0B0', marginTop: 6, textAlign: 'left' }}>
+            <div css={{ fontSize: 14, color: '#A0A0B0', marginTop: 6, textAlign: 'left' }}>
               잔액 : {walletData?.ethBalance ?? '-'} ETH
             </div>
           </div>
           {/* 네트워크 수수료 (예상) */}
-          <div style={{ marginBottom: 10 }}>
-            <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 4 }}>네트워크 수수료 (예상)</label>
-            <div style={{
+          <div css={{ marginBottom: 10 }}>
+            <label css={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 4 }}>네트워크 수수료 (예상)</label>
+            <div css={{
               padding: "10px 16px",
               borderRadius: 10,
               background: "#1B1C22",
@@ -306,8 +250,8 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
             }}>{estimateData?.estimatedCoupon || '계산 중...'}</div>
           </div>
           {/* 쿠폰 선택 콤보박스 */}
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>쿠폰 선택</label>
+          <div css={{ marginBottom: 20 }}>
+            <label css={{ display: "block", fontSize: 15, color: "#A0A0B0", marginBottom: 8 }}>수수표 쿠폰 선택</label>
             <CustomSelect
               value={selectedCouponId}
               options={[
@@ -324,20 +268,20 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
             />
           </div>
           {/* 버튼 그룹 */}
-          <div style={{ display: "flex", gap: 12, marginTop: 32 }}>
+          <div css={buttonGroupStyle}>
             <button
               onClick={onClose}
-              style={{
-                flex: 1,
-                padding: "14px 0",
-                borderRadius: 12,
-                border: "1.5px solid #F2A003",
-                background: "transparent",
-                color: "#F2A003",
-                fontSize: 18,
-                fontWeight: 700,
-                cursor: "pointer"
-              }}
+              css={css`
+                flex: 1;
+                padding: 14px 0;
+                border-radius: 12px;
+                border: 1.5px solid #F2A003;
+                background: transparent;
+                color: #F2A003;
+                font-size: 18px;
+                font-weight: 700;
+                cursor: pointer;
+              `}
             >
               취소
             </button>
@@ -360,17 +304,17 @@ export const TransferStep1 = ({ isOpen, onClose, useCoupon }: TransferStep1Props
                 }
                 setShowStep2(true);
               }}
-              style={{
-                flex: 1,
-                padding: "14px 0",
-                borderRadius: 12,
-                border: "none",
-                background: "#F2A003",
-                color: "#14151A",
-                fontSize: 18,
-                fontWeight: 700,
-                cursor: "pointer"
-              }}
+              css={css`
+                flex: 1;
+                padding: 14px 0;
+                border-radius: 12px;
+                border: none;
+                background: #F2A003;
+                color: #14151A;
+                font-size: 18px;
+                font-weight: 700;
+                cursor: pointer;
+              `}
             >
               다음
             </button>
