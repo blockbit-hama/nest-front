@@ -11,12 +11,6 @@ import {
   mainBoxStyle,
   cardStyle,
   tabBarStyle,
-  homeContainerStyle,
-  topBarInnerStyle,
-  walletComboBoxStyle,
-  profileDropdownButtonStyle,
-  profileDropdownMenuStyle,
-  profileDropdownLinkStyle,
   mainSummaryBoxStyle,
   mainSummaryAmountStyle,
   mainSummaryEthStyle,
@@ -35,7 +29,8 @@ import {
   couponCardStyle,
   couponCardNameStyle,
   couponCardExpireStyle,
-  watermarkStyle
+  watermarkStyle,
+  mainActionReceiveButtonStyle
 } from './styles/homeStyles';
 
 // 더 세련된 코인 SVG 아이콘들 (gradient, 입체감, 라인 등)
@@ -336,88 +331,20 @@ export default function Home() {
           </div>
         </div>
         {/* 전송/수신/스왑 버튼 */}
-        <div css={css`
-          width: calc(100% - 32px);
-          max-width: 432px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 14px;
-          margin-bottom: 28px;
-          padding: 0;
-        `}>
+        <div css={mainActionButtonGroupStyle}>
           <button 
-            css={css`
-              flex: 0.9;
-              min-width: 0;
-              border: none;
-              border-radius: 24px;
-              background: #F2A003;
-              color: #14151A;
-              font-weight: 700;
-              font-size: 22px;
-              height: 58px;
-              line-height: 58px;
-              cursor: pointer;
-              box-shadow: 0 2px 8px rgba(242,160,3,0.08);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              padding: 0;
-              text-align: center;
-            `}
+            css={mainActionButtonStyle}
             onClick={() => setIsTransferModalOpen(true)}
           >전송</button>
           <button 
-            css={css`
-              flex: 0.9;
-              min-width: 0;
-              border: none;
-              border-radius: 24px;
-              background: #E0DFE4;
-              color: #14151A;
-              font-weight: 700;
-              font-size: 22px;
-              height: 58px;
-              line-height: 58px;
-              cursor: pointer;
-              box-shadow: 0 2px 8px rgba(224,223,228,0.08);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              padding: 0;
-              text-align: center;
-            `}
+            css={mainActionReceiveButtonStyle}
           >수신</button>
-          <button css={css`
-            width: 58px;
-            height: 58px;
-            min-width: 58px;
-            min-height: 58px;
-            aspect-ratio: 1/1;
-            border-radius: 50%;
-            background: #23242A;
-            color: #F2A003;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(242,160,3,0.08);
-            flex-shrink: 0;
-          `}>
+          <button css={mainActionSwapButtonStyle}>
             <SwapIcon color="#F2A003" />
           </button>
         </div>
         {/* 잔액 콤보박스 */}
-        <div css={css`
-          width: 120px;
-          margin-left: auto;
-          margin-bottom: 10px;
-          margin-right: 16px;
-        `}>
+        <div css={balanceComboBoxStyle}>
           <CustomSelect
             value={balanceType}
             options={balanceOptions.map(opt => ({ value: opt, label: opt }))}
@@ -431,73 +358,37 @@ export default function Home() {
           />
         </div>
         {/* 잔액 리스트 */}
-        <div css={css`
-          width: 100%;
-          max-width: 480px;
-          background: none;
-          border-radius: 20px;
-          padding: 0;
-          margin-bottom: 20px;
-          margin-left: auto;
-          margin-right: auto;
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-        `}>
+        <div css={balanceListStyle}>
           {coinList.map((coin: Coin) => (
-            <div key={coin.symbol} css={css`
-              ${cardStyle};
-              padding: 14px 24px;
-              gap: 20px;
-            `}>
+            <div key={coin.symbol} css={cardStyle} style={{ padding: '14px 24px', gap: 20 }}>
               {getCoinIcon(coin.symbol, 60)}
-              <div css={css`display: flex; flex-direction: column; min-width: 64px; margin-right: 12px;`}>
-                <span css={css`font-weight: 600; font-size: 26.5px; color: #E0DFE4; font-family: inherit; letter-spacing: -1.5px;`}>{coin.name}</span>
-                <span css={css`font-size: 19px; color: ${coin.changeColor}; font-weight: 500; font-family: inherit;`}>{coin.usd} {coin.change}</span>
+              <div css={balanceCardInnerStyle}>
+                <span css={balanceCardNameStyle}>{coin.name}</span>
+                <span css={css`${balanceCardUsdStyle}; color: ${coin.changeColor};`}>{coin.usd} {coin.change}</span>
               </div>
               <div css={css`display: flex; flex-direction: column; align-items: flex-end; margin-left: auto;`}>
-                <span css={css`font-weight: 700; font-size: 30.5px; color: #E0DFE4; font-family: inherit; letter-spacing: -1.5px;`}>{coin.amount}</span>
-                <span css={css`font-size: 17px; color: #A0A0B0; font-weight: 500; font-family: inherit;`}>{coin.subUsd}</span>
+                <span css={balanceCardAmountStyle}>{coin.amount}</span>
+                <span css={balanceCardSubUsdStyle}>{coin.subUsd}</span>
               </div>
             </div>
           ))}
         </div>
         {/* 쿠폰 리스트: balanceType이 '쿠폰'일 때만 노출, 리스트 위에는 아무 정보도 없음 */}
         {balanceType === '쿠폰' && (
-          <div css={css`
-            width: calc(100% - 32px);
-            max-width: 432px;
-            margin-bottom: 16px;
-            margin-left: auto;
-            margin-right: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-          `}>
+          <div css={couponListStyle}>
             {filteredCouponList.map(coupon => (
-              <div key={coupon.id} css={css`
-                display: flex;
-                align-items: center;
-                background: #1B1C22;
-                border-radius: 12px;
-                padding: 14px 16px;
-                font-weight: 700;
-                border: 2px solid #23242A;
-                box-shadow: none;
-                transition: border 0.2s, box-shadow 0.2s;
-                gap: 10px;
-              `}>
+              <div key={coupon.id} css={couponCardStyle}>
                 <div css={css`flex: 1;`}>
-                  <div css={css`font-size: 16px; color: #E0DFE4;`}>{coupon.name} <span css={css`color: #F2A003; font-weight: 800;`}>{coupon.amount.toLocaleString()}원</span></div>
-                  <div css={css`font-size: 12px; color: #A0A0B0; margin-top: 2px;`}>유효기간: {coupon.expireAt}</div>
+                  <div css={couponCardNameStyle}>{coupon.name} <span css={css`color: #F2A003; font-weight: 800;`}>{coupon.amount.toLocaleString()}원</span></div>
+                  <div css={couponCardExpireStyle}>유효기간: {coupon.expireAt}</div>
                 </div>
               </div>
             ))}
           </div>
         )}
         {/* D'Cent Wallet 워터마크 */}
-        <div css={css`width: 100%; text-align: center; margin-bottom: 24px;`}>
-          <span css={css`font-size: 48px; font-weight: 800; color: #E0DFE4; opacity: 0.12; letter-spacing: 2px;`}>D'Cent Wallet</span>
+        <div css={watermarkStyle}>
+          <span>D'Cent Wallet</span>
         </div>
       </main>
 
