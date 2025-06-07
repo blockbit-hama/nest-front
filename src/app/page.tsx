@@ -32,6 +32,8 @@ import {
   watermarkStyle,
   mainActionReceiveButtonStyle
 } from './styles/homeStyles';
+import { useRouter } from "next/navigation";
+import { TabBar } from "./components/TabBar";
 
 // 더 세련된 코인 SVG 아이콘들 (gradient, 입체감, 라인 등)
 const BtcIcon = ({ size = 54 }: { size?: number }) => (
@@ -193,6 +195,7 @@ export default function Home() {
   const totalCouponAmount = couponList.reduce((sum, c) => sum + c.amount, 0);
 
   const profileRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -393,36 +396,7 @@ export default function Home() {
       </main>
 
       {/* 하단 탭바 */}
-      <nav css={tabBarStyle}>
-        {/* 홈 */}
-        <button css={css`background: none; border: none; color: #888A92; display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer;`}>
-          <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4 12L14 4L24 12" stroke="#888A92" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <rect x="6" y="12" width="16" height="10" rx="2" stroke="#888A92" strokeWidth="2"/>
-          </svg>
-        </button>
-        {/* 지갑(강조) */}
-        <button css={css`background: none; border: none; color: #F2A003; display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer;`}>
-          <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="3" y="8" width="22" height="12" rx="3" stroke="#F2A003" strokeWidth="2"/>
-            <rect x="18" y="13" width="4" height="2" rx="1" fill="#F2A003"/>
-          </svg>
-        </button>
-        {/* 스왑(회색) */}
-        <button css={css`background: none; border: none; color: #888A92; display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer;`}>
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 20L16 26L22 20" stroke="#888A92" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M22 12L16 6L10 12" stroke="#888A92" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-        {/* 설정(회색) */}
-        <button css={css`background: none; border: none; color: #888A92; display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer;`}>
-          <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="14" cy="14" r="10" stroke="#888A92" strokeWidth="2"/>
-            <path d="M14 10V14L16 16" stroke="#888A92" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-      </nav>
+      <TabBar />
 
       {/* 전송 모달 */}
       <TransferStep1 
