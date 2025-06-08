@@ -85,7 +85,13 @@ export const TransferStep2 = ({ isOpen, onClose, onConfirm, useCoupon, transferD
               <label css={labelStyle}>From</label>
               <div css={cardStyle}>
                 {transferData.from && <AddressIcon address={transferData.from} size={22} />}
-                {transferData.from}
+                <span css={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  maxWidth: 220,
+                  display: 'block',
+                }}>{transferData.from}</span>
               </div>
             </div>
 
@@ -94,10 +100,18 @@ export const TransferStep2 = ({ isOpen, onClose, onConfirm, useCoupon, transferD
               <label css={labelStyle}>To</label>
               <div css={cardStyle}>
                 {transferData.to && <AddressIcon address={transferData.to} size={22} />}
-                <span css={{ fontWeight: 700, color: '#F2A003', marginRight: 8 }}>
-                  {(recentAddressList.find(a => a.address === transferData.to)?.label) || '사용자 지정'}
-                </span>
-                {transferData.to}
+                <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <span css={{ fontWeight: 700, color: '#F2A003', marginBottom: 2 }}>
+                    {(recentAddressList.find(a => a.address === transferData.to)?.label) || '사용자 지정'}
+                  </span>
+                  <span css={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: 220,
+                    display: 'block',
+                  }}>{transferData.to}</span>
+                </div>
               </div>
             </div>
 
